@@ -1,0 +1,23 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: my-scaledobject
+  namespace: my-project
+spec:
+  scaleTargetRef:
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    name: httpd-example
+  minReplicaCount: 1
+  maxReplicaCount: 100
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+      namespace: my-project
+      metricName: http_requests_total
+      threshold: '5'
+      query: sum(rate(haproxy_backend_connections_total{route="httpd-example"}[2m])) # Note: query must return a vector/scalar single element response
+      authModes: 'bearer'
+    authenticationRef: 
+      name: keda-prom-creds

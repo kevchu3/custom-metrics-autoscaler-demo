@@ -1,0 +1,13 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-prom-creds
+  namespace: my-project
+spec:
+  secretTargetRef:
+  - parameter: bearerToken
+    name: thanos-token-tbj5s     ### <--- update this token to your own
+    key: token
+  - parameter: ca
+    name: thanos-token-tbj5s     ### <--- update this token to your own
+    key: ca.crt
